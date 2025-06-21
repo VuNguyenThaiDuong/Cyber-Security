@@ -1,11 +1,21 @@
 # Database Systems
 
-Goals:
-- Understand relational databases.
-- Learn SQL and database design.
-- Practice queries and data management.
+## Overview
+Understanding design, implementation, and querying of databases.
 
-Contents:
-- SQL exercises
-- Database design docs
-- Query optimization examples
+## Topics Covered
+- Relational database theory
+- SQL querying and optimization
+- Database normalization and design
+- Transactions and concurrency control
+- NoSQL databases overview (MongoDB, Redis)
+- Secure database management practices
+
+## Projects and Exercises
+- Write complex SQL queries and stored procedures
+- Design ER diagrams and schema
+- Implement access control for databases
+
+## References
+- Database System Concepts (Silberschatz)
+- SQLZoo, LeetCode SQL exercises

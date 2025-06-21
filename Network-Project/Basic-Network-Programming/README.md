@@ -1,11 +1,20 @@
 # Basic Network Programming
 
-Goals:
-- Understand TCP/UDP socket programming.
-- Write simple network applications.
-- Learn basic network protocols.
+## Overview
+This folder focuses on programming network applications and understanding core networking protocols.
 
-Contents:
-- Sample TCP client/server code
-- Protocol explanations
-- Practice examples
+## Topics Covered
+- Socket programming concepts (TCP/UDP)
+- Client-server architecture
+- Protocol design and implementation
+- Data serialization formats (JSON, XML, Protocol Buffers)
+- Error handling and network reliability
+
+## Practical Exercises
+- Build TCP/UDP chat applications
+- Implement simple HTTP server
+- Analyze network packets (using Wireshark, tcpdump)
+
+## References
+- Beej's Guide to Network Programming
+- RFC documents for TCP/IP protocols
