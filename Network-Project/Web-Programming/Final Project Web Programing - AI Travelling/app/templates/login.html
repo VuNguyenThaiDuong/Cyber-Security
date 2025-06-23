@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Đăng Nhập</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: url('../static/images/ho-lak-dak-lak-tay-nguyen-hoang-hon-sunset.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+
+    .login-container {
+      text-align: center;
+      backdrop-filter: blur(8px);
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 30px 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    .login-form {
+      width: 100%;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px 35px 10px 35px;
+      border: none;
+      border-bottom: 1px solid white;
+      background: transparent;
+      color: white;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .input-group input::placeholder {
+      color: white;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-bottom: 2px solid orange;
+      transition: border-color 0.3s ease;
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: white;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 18px;
+      color: white;
+    }
+
+    .options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      margin-bottom: 20px;
+      margin-top:30px;
+      flex-wrap: wrap;
+      box-sizing: border-box;
+    }
+
+    .options label,
+    .options a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .options label {
+        display: flex;
+        align-items: center;
+        gap: 5px; /* cách giữa ô và chữ */
+    }
+
+    .login-btn {
+      background: #B61840;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .or {
+        display: flex;
+        justify-content: center; /* canh giữa ngang */
+        align-items: center; 
+        background-color: #B61840;
+        border-radius: 50%;
+        height: 40px;
+        width: 40px;
+        margin: 20px auto;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    .social-login {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .social-btn {
+      flex: 1 1 48%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      color: white;
+    }
+
+    .facebook {
+      background: #3b5998;
+    }
+
+    .google {
+      background: red;
+    }
+
+    input[type="password"]::-ms-reveal,
+    input[type="password"]::-ms-clear,
+    input[type="password"]::-webkit-credentials-auto-fill-button,
+    input[type="password"]::-webkit-clear-button,
+    input[type="password"]::-webkit-inner-spin-button {
+      display: none !important;
+      appearance: none;
+    }
+
+    @media screen and (max-width: 480px) {
+      h2 {
+        font-size: 1.5em;
+      }
+      .login-container {
+        padding: 20px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Home Button -->
+  <a href="/" class="home-button" style="position: fixed; top: 20px; left: 20px; z-index: 1000; background-color: rgba(255, 255, 255, 0.9); color: #B61840; padding: 10px 15px; border-radius: 25px; text-decoration: none; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2); transition: all 0.3s ease;">
+    <i class="fas fa-home" style="margin-right: 5px;"></i>Trang Chủ
+  </a>
+  
+  <div class="login-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" style="padding: 10px; margin-bottom: 15px; border-radius: 5px; color: white; background-color: {% if category == 'success' %}rgba(40, 167, 69, 0.8){% else %}rgba(220, 53, 69, 0.8){% endif %};">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <h2>Tham gia ngay tại đây</h2>
+    <form class="login-form" action="/loginfunction" method="POST">
+      {% set safe_next = '' %}
+      {% if next and 'forgot-password' not in next and 'reset-password-otp' not in next and 'set-new-password' not in next and 'verify_otp' not in next and 'verify-otp' not in next and 'register' not in next %}
+        {% set safe_next = next %}
+      {% elif request.referrer and 'forgot-password' not in request.referrer and 'reset-password-otp' not in request.referrer and 'set-new-password' not in request.referrer and 'verify_otp' not in request.referrer and 'verify-otp' not in request.referrer and 'register' not in request.referrer %}
+        {% set safe_next = request.referrer %}
+      {% endif %}
+      <input type="hidden" name="next_page" value="{{ safe_next }}">
+      <div class="input-group">
+        <i>👤</i>
+        <input type="text" name="email" placeholder="Email" required />
+      </div>
+      <div class="input-group">
+        <i>🔒</i>
+        <input type="password" id="password" name="password" placeholder="Mật khẩu" required />
+        <span class="toggle-password" toggle="#password">👁</span>
+      </div>
+      <div class="options">
+        <label><input type="checkbox" name="remember" /> Nhớ mật khẩu</label>
+        <a href="/forgot-password">Forgot Password?</a>
+      </div>
+      <p style="color: yellow">Bạn chưa có tài khoản. <a style="color: white" href="/register?next={{ request.url }}">Đăng ký</a></p>
+      <button type="submit" class="login-btn">Đăng nhập</button>
+      <div class="or">or</div>
+      <div class="social-login">
+        <button type="button" class="social-btn facebook" onclick = "window.location.href = facebookLoginUrl ">Facebook</button>
+        <button type="button" class="social-btn google" onclick = "window.location.href = googleLoginUrl ">Google</button>
+      </div>
+    </form>
+  </div>
+
+
+  <script>
+    /* hiệu ứng hiện/ẩn mật khẩu */
+    document.querySelectorAll(".toggle-password").forEach(function (eye) {
+      eye.addEventListener("click", function () {
+        const input = document.querySelector(this.getAttribute("toggle"));
+        if (input.type === "password") {
+          input.type = "text";
+          this.textContent = "🙈";
+        } else {
+          input.type = "password";
+          this.textContent = "👁";
+        }
+      });
+    });
+    
+    // Lấy tham số next từ trang hiện tại nếu có, nếu không thì dùng referrer
+    const nextPage = "{{ safe_next }}";
+    const googleLoginUrl = "{{ url_for('auth.login_google') }}" + (nextPage ? "?next=" + encodeURIComponent(nextPage) : "");
+    const facebookLoginUrl = "{{ url_for('loginfb.facebook_login') }}" + (nextPage ? "?next=" + encodeURIComponent(nextPage) : "");
+
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+          var alerts = document.querySelectorAll('.alert');
+          alerts.forEach(function(alert) {
+              alert.style.display = 'none';
+          });
+      }, 1000);
+  });
+
+  </script>
+</body>
+</html>

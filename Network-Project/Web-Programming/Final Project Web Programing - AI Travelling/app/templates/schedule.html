@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch trình Du lịch - </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/schedule.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Home Button -->
+    <a href="/" class="home-button" style="position: fixed; top: 20px; left: 20px; z-index: 1000; background-color: rgba(255, 255, 255, 0.95); color: #4285F4; padding: 12px 18px; border-radius: 25px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s ease; border: 2px solid #4285F4;">
+        <i class="fas fa-home" style="margin-right: 8px;"></i>Trang Chủ
+    </a>
+    
+    <!-- hiệu ứng nền  -->
+    <div class="animated-background">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+            <div class="shape shape-6"></div>
+        </div>
+        <canvas id="particleCanvas"></canvas>
+    </div>
+
+    <!-- thanh quá trình chuyến đi -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- hiệu ứng loading -->
+    <div class="loading-animation" id="loadingAnimation">
+        <div class="loading-container">
+            <div class="plane-icon">
+                <i class="fas fa-plane"></i>
+            </div>
+            <div class="loading-text">
+                <h3>Đang chuẩn bị chuyến đi tuyệt vời...</h3>
+                <div class="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="schedule-container" id="scheduleContainer" style="display: none;">
+        <div class="header">
+            <div class="header-decoration">
+                <div class="decoration-element decoration-1"></div>
+                <div class="decoration-element decoration-2"></div>
+                <div class="decoration-element decoration-3"></div>
+            </div>
+            <h1><i class="fas fa-map-marked-alt"></i> Lịch Trình Du Lịch</h1>
+            <p class="subtitle">Hành trình khám phá những điều tuyệt vời</p>
+            <div class="weather-widget" id="weatherWidget">
+                <i class="fas fa-sun"></i>
+                <span>Thời tiết thuận lợi cho chuyến đi</span>
+            </div>
+        </div>
+
+        <!-- bảng tóm tắt chuyến đi -->
+        <div class="trip-summary" id="tripSummary">
+            <!-- Summary cards will be generated here -->
+        </div>
+
+        <!-- bản xem trước chuyến đi -->
+        <div class="journey-preview">
+            <h3><i class="fas fa-route"></i> Tổng quan hành trình</h3>
+            <div class="journey-path" id="journeyPath">
+                <!-- Journey points will be generated here -->
+            </div>
+            <div class="journey-info" id="journeyInfo">
+                <!-- Journey statistics will be generated here -->
+            </div>
+        </div>
+
+        <!-- thời gian chi tiết cho chuyến đi -->
+        <div class="timeline-container">
+            <div class="timeline" id="timeline">
+                <!-- Timeline items will be generated here -->
+            </div>
+            
+            <!-- tổng giá -->
+            <div class="total-cost" id="totalCost">
+                <div class="cost-decoration">
+                    <i class="fas fa-coins"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-heart"></i>
+                </div>
+                <span>Tổng chi phí dự kiến: </span>
+                <span class="counter" id="totalCostValue">0</span>
+                <span> VND</span>
+            </div>
+        </div>
+
+        <div class="fun-facts">
+            <h3><i class="fas fa-lightbulb"></i> Thông tin thú vị</h3>
+            <div class="facts-grid" id="factsGrid">
+            </div>
+        </div>
+
+        <!-- nút xem trên bản đồ, lưu vào lịch sử, chia sẻ -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="mapBtn">
+                <i class="fas fa-map"></i>
+                <span>Xem trên bản đồ</span>
+                <div class="btn-ripple"></div>
+            </button>
+            {% if "user_name" in session %}
+            <button class="btn btn-secondary" id="saveHistoryBtn">
+                <i class="fas fa-save"></i>
+                <span>Lưu vào lịch sử</span>
+                <div class="btn-ripple"></div>
+            </button>
+            {% endif %}
+            <button class="btn btn-accent" id="shareBtn">
+                <i class="fas fa-share-alt"></i>
+                <span>Chia sẻ</span>
+                <div class="btn-ripple"></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- nút thêm, xem thời tiết, ghi chú, ảnh -->
+    <div class="floating-action-button" id="fabMenu">
+        <div class="fab-main">
+            <i class="fas fa-plus"></i>
+        </div>
+        <div class="fab-options">
+            <div class="fab-option" data-action="weather">
+                <i class="fas fa-cloud-sun"></i>
+                <span>Thời tiết</span>
+            </div>
+            <div class="fab-option" data-action="notes">
+                <i class="fas fa-sticky-note"></i>
+                <span>Ghi chú</span>
+            </div>
+            <div class="fab-option" data-action="photos">
+                <i class="fas fa-camera"></i>
+                <span>Ảnh</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/schedule.js') }}"></script>
+</body>
+</html> 

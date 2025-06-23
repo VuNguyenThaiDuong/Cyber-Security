@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Assistant - Khám Phá Việt Nam</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/weather.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-route logo-icon"></i>
+                Travel Assistant
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Trang Chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/page2">Điểm Đến</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/experiences">Trải Nghiệm</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">Về Chúng Tôi</a>
+                    </li>
+                </ul>
+                <div class="auth-buttons">
+                    {% if "user_name" in session or "full_name" in session %}
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="{{ session['user_avatar'] if session.get('user_avatar') else url_for('static', filename='images/default-avatar.png') }}" width="30" height="30" class="rounded-circle me-2" onerror="this.src='/static/images/default-avatar.png'">
+                                {{ session['full_name'] if session.get('full_name') else session['user_name'] }}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="/dashboard">
+                                        <i class="fas fa-user-circle me-2"></i>
+                                        <span>Hồ sơ</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/history">
+                                        <i class="fas fa-history me-2"></i>
+                                        <span>Lịch sử truy vấn</span>
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="/logout">
+                                        <i class="fas fa-sign-out-alt me-2"></i>
+                                        <span>Đăng xuất</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="/login" class="btn btn-auth btn-login">Đăng nhập</a>
+                        <a href="/register" class="btn btn-auth btn-register">Đăng ký</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="search-box-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="fas fa-search text-primary"></i>
+                        </span>
+                        <input type="text" class="form-control border-start-0" placeholder="Tìm kiếm địa điểm du lịch..." id="destinationInput" autocomplete="off">
+                        <button class="btn btn-primary" type="button" id="searchButton">Tìm Kiếm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carousel Section -->
+    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000"  >
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="../static/images/anhnen2.jpg" alt="Tam Cốc Ninh Bình">
+                <div class="carousel-overlay">
+                    <h1>THE WORLD FULL OF JOY</h1>
+                    <p>Explore your joy anytime, anywhere, from spontaneous trips to adventures around the world.</p>
+                    <div class="button-group">
+                        <button class="btn_in" onclick="window.location.href='/page4'">
+                            <i class="fas fa-microphone me-2"></i> Dùng Giọng Nói
+                        </button>
+                        <button class="btn_in" onclick="window.location.href='/page2'">
+                            <i class="fas fa-globe me-2"></i> Khám Phá Ngay
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="../static/images/anhnen1.jpg" alt="Khám phá Việt Nam">
+                <div class="carousel-overlay">
+                    <h1>KHÁM PHÁ VIỆT NAM</h1>
+                    <p>Từ núi cao đến biển rộng, từ đô thị nhộn nhịp đến làng quê bình yên - tất cả đang chờ bạn.</p>
+                    <div class="button-group">
+                        <button class="btn_in" onclick="window.location.href='/page4'">
+                            <i class="fas fa-microphone me-2"></i> Dùng Giọng Nói
+                        </button>
+                        <button class="btn_in" onclick="window.location.href='/page2'">
+                            <i class="fas fa-globe me-2"></i> Khám Phá Ngay
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="../static/images/ninhbinh.webp" alt="Ninh Bình">
+                <div class="carousel-overlay">
+                    <h1>HÀNH TRÌNH KHÁM PHÁ</h1>
+                    <p>Tạo những kỷ niệm đáng nhớ cùng Travel Assistant - người bạn đồng hành đáng tin cậy.</p>
+                    <div class="button-group">
+                        <button class="btn_in" onclick="window.location.href='/page4'">
+                            <i class="fas fa-microphone me-2"></i> Dùng Giọng Nói
+                        </button>
+                        <button class="btn_in" onclick="window.location.href='/page2'">
+                            <i class="fas fa-globe me-2"></i> Khám Phá Ngay
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+   
+    
+
+    <!-- Box hiển thị Weather -->
+    <section class="weather-section" id="weatherSection">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-cloud-sun me-3"></i>
+                Thời Tiết Hôm Nay
+            </h2>
+            <div class="weather-grid">
+                <!-- Phần để hiển thị thời tiết từ db và api -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Giới thiệu tính năng -->
+    <section class="features-section">
+        <div class="container">
+            <h2>Vì sao bạn nên chọn chúng tôi</h2>
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="feature-item">
+                        <img src="https://res.klook.com/image/upload/fl_lossy.progressive,q_85/c_fill,w_112,h_112/v1663655837/ued/platform/Exploring_made_easy.webp" alt="Tiện lợi" class="feature-icon">
+                        <h4>Dễ dàng và tiện lợi</h4>
+                        <p>Chọn được lộ trình và nơi bạn muốn tới trong một click</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="feature-item">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNGbgl-6GuvlUbSAkMR11RzKHFGTyd0JNmlA&s" alt="Bảo mật" class="feature-icon">
+                        <h4>Bảo mật</h4>
+                        <p>Thông tin của bạn sẽ được chúng tôi đảm bảo an toàn và không bị rò rỉ</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="feature-item">
+                        <img src="https://static.vecteezy.com/system/resources/previews/004/996/790/original/robot-chatbot-icon-sign-free-vector.jpg" alt="AI" class="feature-icon">
+                        <h4>Nhanh chóng và thông minh</h4>
+                        <p>Website chúng tôi được tích hợp AI giúp gợi ý cho bạn những chuyến đi hợp lí và thuận tiện nhất</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="feature-item">
+                        <img src="https://www.shutterstock.com/image-vector/lightbulb-icon-symbol-idea-flat-600nw-1399665770.jpg" alt="Lựa chọn" class="feature-icon">
+                        <h4>Vô vàn lựa chọn</h4>
+                        <p>AI của chúng tôi đưa ra vô cùng nhiều gợi ý cho bạn vô tư lựa chọn theo ý thích</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-7 about-content">
+                    <h2>Về Chúng Tôi</h2>
+                    <p>Hãy tham gia cùng chúng tôi để tìm được cho mình những chuyến du lịch phù hợp nhất, khám phá những điểm đến tuyệt vời nhất tại Việt Nam và tạo những kỷ niệm đáng nhớ cùng Travel Assistant.</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="contact-info">
+                                <h3>Liên Hệ</h3>
+                                <p><i class="fas fa-map-marker-alt"></i> Khu phố 6, phường Linh Trung, TP. Thủ Đức</p>
+                                <p><i class="fas fa-envelope"></i> info@travelassistant.com</p>
+                                <p><i class="fas fa-phone"></i> +84 123 456 789</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="contact-info">
+                                <h3>Theo Dõi</h3>
+                                <div class="social-icons">
+                                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="text-center">
+                        <img src="https://cdn.pixabay.com/photo/2018/03/10/09/45/businessman-3213659_1280.jpg" alt="Travel Assistant Team" class="img-fluid rounded" style="max-height: 400px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="container my-5 py-5">
+        <h2 class="section-title text-center mb-5">Khách Hàng Nói Gì Về Chúng Tôi</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="rounded-circle" width="60" height="60">
+                            <div class="ms-3">
+                                <h5 class="mb-0">Nguyễn Văn Nhân</h5>
+                                <small class="text-muted">Hà Nội</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <!-- Số sao -->
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="card-text">"Travel Assistant đã giúp tôi lên kế hoạch cho chuyến đi Ninh Bình một cách hoàn hảo. Những gợi ý của họ đều rất chính xác và phù hợp với sở thích của tôi."</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="rounded-circle" width="60" height="60">
+                            <div class="ms-3">
+                                <h5 class="mb-0">Trần Thị Tâm</h5>
+                                <small class="text-muted">TP. Hồ Chí Minh</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star-half-alt text-warning"></i>
+                        </div>
+                        <p class="card-text">"Tôi rất ấn tượng với tính năng AI của Travel Assistant. Nó giúp tôi tiết kiệm rất nhiều thời gian trong việc tìm kiếm và so sánh các điểm đến."</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="User" class="rounded-circle" width="60" height="60">
+                            <div class="ms-3">
+                                <h5 class="mb-0">Lê Văn Luyện</h5>
+                                <small class="text-muted">Đà Nẵng</small>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="card-text">"Chuyến du lịch Hạ Long của gia đình tôi thật tuyệt vời nhờ những gợi ý chi tiết từ Travel Assistant. Chắc chắn tôi sẽ sử dụng dịch vụ này cho những chuyến đi tiếp theo."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="container-fluid py-5" style="background-color: #f8f9fa;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <h2 class="mb-4">Đăng Ký Nhận Thông Tin</h2>
+                    <p class="mb-4">Hãy đăng ký để nhận những thông tin mới nhất về điểm đến hấp dẫn và ưu đãi đặc biệt.</p>
+                    <form class="row g-3 justify-content-center">
+                        <div class="col-md-8">
+                            <input type="email" class="form-control form-control-lg" placeholder="Địa chỉ email của bạn">
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">Đăng Ký</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h3 class="footer-heading">Travel Assistant</h3>
+                    <p>Chúng tôi cam kết mang đến cho bạn những trải nghiệm du lịch tuyệt vời nhất tại Việt Nam với sự hỗ trợ của công nghệ AI tiên tiến.</p>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/thaiduong.vunguyen.37" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
+                    <h3 class="footer-heading">Liên Kết</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Trang Chủ</a></li>
+                        <li><a href="/page2">Điểm Đến</a></li>
+                        <li><a href="/experiences">Trải Nghiệm</a></li>
+                        <li><a href="#about">Về Chúng Tôi</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h3 class="footer-heading">Chính Sách</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Điều Khoản Sử Dụng</a></li>
+                        <li><a href="#">Chính Sách Bảo Mật</a></li>
+                        <li><a href="#">Chính Sách Hoàn Tiền</a></li>
+                        <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h3 class="footer-heading">Liên Hệ</h3>
+                    <div class="footer-contact">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <p>Khu phố 6, phường Linh Trung,<br> TP. Thủ Đức, TP. Hồ Chí Minh</p>
+                        </div>
+                    </div>
+                    <div class="footer-contact">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <p>info@travelassistant.com</p>
+                        </div>
+                    </div>
+                    <div class="footer-contact">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <p>+84 123 456 789</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Travel Assistant. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top" id="backToTop">
+        <i class="fas fa-chevron-up"></i>
+    </a>
+
+     <!-- Nút bật/tắt -->
+  <button id="toggle-chatbot">🤖 Tour Guide</button>
+
+  <!-- Chatbox -->
+  <div id="chat-container">
+    <div id="chat">
+      <div class="message bot">
+        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" class="avatar" />
+        <div class="text"><strong>Hướng dẫn viên:</strong> Xin chào! Bạn muốn hỏi gì về du lịch Việt Nam? 😊</div>
+      </div>
+    </div>
+    <div id="input-area">
+      <input type="text" id="input" placeholder="Bạn muốn đi đâu?" />
+      <button id="send">Gửi</button>
+    </div>
+  </div>
+
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/weather.js') }}"></script>
+</body>
+</html>
